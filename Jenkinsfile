@@ -84,6 +84,7 @@ pipeline {
             // Run integration test
             steps {
                 script {
+                    echo 'in Integration tests issue'
                     def mvnHome = tool 'Maven3.5.3'
                     if (isUnix()) {
                         // just to trigger the integration test without unit testing
@@ -93,8 +94,10 @@ pipeline {
                     }
 
                 }
-                // cucumber reports collection
+                // cucumber reports collection/
+                echo 'before cucumber'
                 cucumber buildStatus: null, fileIncludePattern: '**/cucumber.json', jsonReportDirectory: 'target', sortingMethod: 'ALPHABETICAL'
+            echo 'After Cucumber'
             }
         }
         /*stage('Sonar scan execution') {
@@ -127,6 +130,7 @@ pipeline {
         stage('Development deploy approval and deployment') {
             steps {
                 script {
+                    echo 'in Development Deployment'
                     if (currentBuild.result == null || currentBuild.result == 'SUCCESS') {
                         timeout(time: 3, unit: 'MINUTES') {
                             // you can use the commented line if u have specific user group who CAN ONLY approve
