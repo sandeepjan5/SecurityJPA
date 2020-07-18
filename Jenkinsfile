@@ -153,7 +153,9 @@ pipeline {
                                 echo 'dir name ......' + dir
                                sh '''
                                 cf delete 'ApplicationToDev' -f
+                                echo 'CF name2 ......'
                                 cf delete 'HelloSpringBootPCF' -f
+                                echo 'CF name3 ......'
                                 cf login -a 'api.run.pivotal.io' -u 'sandeep.amarnath.jan5@gmail.com' -p 'Welcome12#' -o 'SandeepPCF' -s 'development'
                                 cf push
                                  '''
