@@ -8,7 +8,7 @@ pipeline {
 
     // global env variables
     environment {
-        EMAIL_RECIPIENTS = 'sandeep.amarnath@gmail.com'
+        EMAIL_RECIPIENTS = 'srinivas.bsg@gmail.com'
     }
    
     stages {
@@ -21,7 +21,7 @@ pipeline {
                     // ** NOTE: This 'M3' Maven tool must be configured
                     // **       in the global configuration.
                     echo 'Pulling...' + env.BRANCH_NAME
-                    echo 'branch name '+ env.JOB_NAME
+                    echo 'brancg name '+ env.JOB_NAME
                     print 'before if isUnix...'
                     def mvnHome = tool 'Maven3.5.3'
                     if (isUnix()) {
@@ -84,7 +84,6 @@ pipeline {
             // Run integration test
             steps {
                 script {
-                    echo 'in Integration tests issue'
                     def mvnHome = tool 'Maven3.5.3'
                     if (isUnix()) {
                         // just to trigger the integration test without unit testing
@@ -94,10 +93,10 @@ pipeline {
                     }
 
                 }
-                // cucumber reports collection/
-                echo 'before cucumber'
+                // cucumber reports collection
+                 echo 'cucumber buildStatus:........started'
                 cucumber buildStatus: null, fileIncludePattern: '**/cucumber.json', jsonReportDirectory: 'target', sortingMethod: 'ALPHABETICAL'
-            echo 'After Cucumber'
+                echo 'cucumber buildStatus:........ended'
             }
         }
         /*stage('Sonar scan execution') {
@@ -130,14 +129,14 @@ pipeline {
         stage('Development deploy approval and deployment') {
             steps {
                 script {
-                    echo 'in Development Deployment'
+                    echo 'Development deploy approval and deployment........started'
                     if (currentBuild.result == null || currentBuild.result == 'SUCCESS') {
-                        timeout(time: 3, unit: 'MINUTES') {
+                        timeout(time: 5, unit: 'MINUTES') {
                             // you can use the commented line if u have specific user group who CAN ONLY approve
                             //input message:'Approve deployment?', submitter: 'it-ops'
                             input message: 'Approve deployment?'
                         }
-                        timeout(time: 2, unit: 'MINUTES') {
+                        timeout(time: 5, unit: 'MINUTES') {
                             //
                             if (developmentArtifactVersion != null && !developmentArtifactVersion.isEmpty()) {
                                 // replace it with your application name or make it easily loaded from pom.xml
@@ -147,15 +146,13 @@ pipeline {
                                 def jarName = "${pom.artifactId}-${developmentArtifactVersion}.jar"
                                 echo "the application is deploying ${jarName}"
                                 // NOTE : CREATE your deployemnt JOB, where it can take parameters whoch is the jar name to fetch from jenkins workspace
-                                //build job: 'ApplicationToDev', parameters: [[$class: 'StringParameterValue', name: 'jarName', value: jarName]]
+                               // build job: 'ApplicationToDev', parameters: [[$class: 'StringParameterValue', name: 'jarName', value: jarName]]
                                 echo "CF Login..."
                                 def dir = pwd() 
                                 echo 'dir name ......' + dir
                                sh '''
-                                cf delete 'ApplicationToDev' -f
-                                cf delete 'HelloSpringBootPCF' -f
-                                cf login -a 'api.run.pivotal.io' -u 'sandeep.amarnath.jan5@gmail.com' -p 'Welcome12#' -o 'SandeepPCF' -s 'development'
-                                cf push
+                                cf login -a 'api.run.pivotal.io' -u 'sandeep.amarnath.jan5@gmail.com' -p 'Welcome12#' -o 'SandeepPCF' -s 'development' 
+                                cf push -d 'pcf.domain' 
                                  '''
                                 echo 'the application is deployed !'
                             } else {
@@ -326,7 +323,7 @@ def getChangeString() {
 
 def sendEmail(status) {
     mail(
-            to: 'sandeep.amarnath.jan5@gmail.com',
+            to: 'srinivas.bsg@gmail.com',
             subject: "Build $BUILD_NUMBER - " + status + " (${currentBuild.fullDisplayName})",
             body: "Changes:\n " + getChangeString() + "\n\n   please  Check console output at: $BUILD_URL/console" + "\n")
 }
@@ -385,3 +382,4 @@ def getReleaseVersion() {
                        failFast: true)
            }
        }*/
+
